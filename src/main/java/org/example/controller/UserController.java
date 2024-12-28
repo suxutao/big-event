@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
+import org.example.utils.JwtUtil;
 import org.example.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -40,7 +43,10 @@ public class UserController {
             return Result.error("用户不存在");
         } else {
             if (Objects.equals(user.getPassword(), Md5Util.getMD5String(password))) {
-                return Result.success("jwt令牌");
+                Map<String, Object> claims=new HashMap<>();
+                claims.put("id",user.getId());
+                claims.put("username",user.getUsername());
+                return Result.success(JwtUtil.genToken(claims));
             } else {
                 return Result.error("密码错误");
             }
