@@ -16,7 +16,7 @@ public class ArticleController {
     private ArticleService articleService;
 
     @PostMapping
-    public Result add(@RequestBody @Validated Article article){
+    public Result add(@RequestBody @Validated(Article.Add.class) Article article){
         articleService.add(article);
         return Result.success();
     }
@@ -30,5 +30,27 @@ public class ArticleController {
     ){
         PageBean<Article>pageBean=articleService.list(pageNum,pageSize,categoryId,state);
         return Result.success(pageBean);
+    }
+
+    @GetMapping("/detail")
+    public Result<Article> detail(Integer id){
+        if (id==null)
+            return Result.error("ID不能为空");
+        Article article=articleService.detail(id);
+        return Result.success(article);
+    }
+
+    @PutMapping
+    public Result update(@RequestBody @Validated(Article.Update.class) Article article){
+        articleService.update(article);
+        return Result.success();
+    }
+
+    @DeleteMapping
+    public Result delete(Integer id){
+        if (id==null)
+            return Result.error("ID不能为空");
+        articleService.delete(id);
+        return Result.success();
     }
 }
